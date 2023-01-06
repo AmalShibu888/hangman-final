@@ -1,7 +1,7 @@
 const express = require('express')
 const mysql = require('mysql');
-const app =express();
-const port =8383;
+const app = express();
+const port = 8383;
 
 
 const con =  mysql.createConnection({
@@ -46,7 +46,7 @@ app.get('/form' , (req,res) =>{
     res.send(JSON.stringify(info));
 })
 app.post('/',(req,res)=>{
-    const {username , password } = req.body;
+    // const {username , password,winCount} = req.body;
     console.log(req.body);
     info.push(req.body)
     // if(!username || !password)
@@ -54,3 +54,16 @@ app.post('/',(req,res)=>{
     res.status(200).send({status : 'recieved'});
     console.log(info);
 } )
+
+app.post('/logout' ,(req,res) =>{
+    console.log(req.body);
+    
+        for(let i = 0;i<info.length;i++){
+            if(info[i].username == req.body.username)
+            {
+                info[i].winCount += req.body.winCount;
+                info[i].total += req.body.total;
+            }
+    }
+    console.log(info);
+})
