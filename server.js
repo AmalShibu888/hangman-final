@@ -1,8 +1,10 @@
+const { response } = require('express');
 const express = require('express')
 const mysql = require('mysql');
 const app = express();
 const port = 8383;
 
+const Datastore = require('nedb');
 
 const con =  mysql.createConnection({
     host : 'localhost',
@@ -40,30 +42,44 @@ app.get('/info' , (req,res) =>{
 
 
 
-const info = new Array;
+const database = new Datastore('database.db');
+database.loadDatabase();
 
 app.get('/form' , (req,res) =>{
-    res.send(JSON.stringify(info));
+    database.find({},(err,data) =>{
+        if(err){
+            res.end();
+            return;
+        }
+        res.send(JSON.stringify(data));
+    })
+    
 })
 app.post('/',(req,res)=>{
     // const {username , password,winCount} = req.body;
     console.log(req.body);
-    info.push(req.body)
+    database.insert(req.body)
     // if(!username || !password)
     //     return res.status(400).send({status :'failed'});
     res.status(200).send({status : 'recieved'});
-    console.log(info);
+    // console.log(info);
 } )
 
 app.post('/logout' ,(req,res) =>{
     console.log(req.body);
-    
-        for(let i = 0;i<info.length;i++){
-            if(info[i].username == req.body.username)
-            {
-                info[i].winCount += req.body.winCount;
-                info[i].total += req.body.total;
-            }
-    }
-    console.log(info);
+        const data = req.body;
+            database.find({username : data.username},(err,docs)=>{
+                if(err)
+                {
+                    res.end();
+                    return;
+                }
+                const tuple = docs[0];
+                tuple.winCount += data.winCount;
+                tuple.total += data.total;
+                console.log(docs);
+                database.update({ username: data.username }, tuple, {}, function (err, numReplaced) {});
+                database.loadDatabase();
+            })
+    // console.log(info);
 })

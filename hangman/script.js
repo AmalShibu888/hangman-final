@@ -80,10 +80,11 @@ async function postlogout(){
 async function getInfo2(e){
     e.preventDefault();
     loginwrongmessage.textContent = "";
+    
     const res = await fetch(baseurl +'form',{
         method: 'GET'
     })
-    
+    console.log("k");
     const data = await res.json();
     
     console.log(data);
@@ -126,20 +127,9 @@ let wincount = 0,Total = 0, userName = "";
 class SelectedWord{
     // get a random word from the database
     getWord(data){
+        console.log(data);
         this.word = data;
         Total++;
-        console.log("total : " ,Total);
-        // const obj = getInfo();
-        // obj.then(data => {
-        //     this.word = data;
-        //     console.log("data : ",this.word)
-        //     });
-        console.log( "ans : ",this.word);
-        // const keyss = Object.keys(options);
-        // this.category = keyss[Math.floor(Math.random()*keyss.length)];
-        // const arr = options[this.category];
-        // this.word = arr[Math.floor(Math.random()*arr.length)];
-        // console.log(this.word);
         this.hideWord();
         this.noOfRepeat();
         return this;
@@ -184,16 +174,16 @@ class SelectedWord{
 
 
 // making digital and analog Keyboard responsive
-class keyboard extends SelectedWord{
+class Keyboard extends SelectedWord{
 
+    
 
 // making digital Keyboard responsive
     digitalKeyboard(){
         digitalKeyboard.forEach((e)=>{
-            e.addEventListener('click',(x)=>{
-                this.updateKeyboard(e.textContent , e);
-                
-                
+                e.addEventListener('click',(x)=>{
+                this.updateKeyboard_ShowLetter_updateFigure(e.textContent , e);
+                this.result();
             })
         })
         return this;
@@ -205,44 +195,48 @@ class keyboard extends SelectedWord{
         document.addEventListener('keypress' , updateAnalogKeyboard);
         return this;
     }
-    // updating on the keyboard image
-    updateKeyboard(s , node){
-        if(newvariable.repeat[s.toLowerCase()] >= 0)
+    
+
+
+    // updating keyboard keys after pressing as well as update the success and fail variables
+    updateKeyboard_ShowLetter_updateFigure(s , node){
+        if(this.repeat[s.toLowerCase()] > 0)
         {
-            console.log(newvariable.success);
-            if(newvariable.repeat[s.toLowerCase()] > 0)
-            {
-                node.className += " rightLetter";
-                newvariable.updateLetter(s);
-            }
-            else
-            {
-                node.className += " wrongLetter";
-                newvariable.fail++;
-                newvariable.updateFigure(newvariable.fail);
-                newvariable.updateWrongLetter(s);
-            }
-            newvariable.repeat[s.toLocaleLowerCase()] = -1;
-            if(newvariable.fail == 6){
-                alert('Sorry you are hanged !!!!');
-                newvariable.reset();
-            }
-            else if(newvariable.success == 0){
-                alert('yay you won !!!!');
-                wincount++;
-                console.log("wincount : ",wincount);
-                newvariable.reset();
-            }
+            node.className += " rightLetter";
+            this.showLetter(s);
+            this.success-= this.repeat[s.toLowerCase()];
         }
+        else if(this.repeat[s.toLowerCase()] == 0)
+        {
+            node.className += " wrongLetter";
+            this.fail++;
+            console.log("fail : ",this.fail)
+            this.updateFigure(this.fail);
+        } 
+        this.repeat[s.toLowerCase()] = -1;
     }
 }
 
 
 
-
 // updating the figure the analog keyboard and the wrong letters slots with each press
-class updatingReset extends keyboard{
+class updatingReset extends Keyboard{
 
+    
+    result(){
+        console.log(this.fail, "  ",this.success);
+        if(this.fail == 6)
+        {
+            this.reset();
+            alert("Sorry you are hanged");
+        }
+        else if(this.success == 0)
+        {
+            this.reset();
+            alert("Yay you won !!!!!");
+            wincount++;
+        }
+    }
     // updating the figure in accordance with the current state
     updateFigure(x){
         if(x == 1){
@@ -280,11 +274,10 @@ class updatingReset extends keyboard{
 
     // makes the character visible and decrease the success parameter by 1
 
-    updateLetter(s){
+    showLetter(s){
         let x = document.querySelectorAll('.S'+s.toLowerCase());
         x.forEach(e => {
             e.textContent = s.toUpperCase();
-            this.success--;
         });
         
     }
@@ -292,11 +285,11 @@ class updatingReset extends keyboard{
 
 
 
-    // makes the wrong letters popup in the wrong letters section
-    updateWrongLetter(s){
-        let x = document.querySelector('.wrongLetterList');
-        x.textContent += " "+s;
-    }
+    // // makes the wrong letters popup in the wrong letters section
+    // updateWrongLetter(s){
+    //     let x = document.querySelector('.wrongLetterList');
+    //     x.textContent += " "+s;
+    // }
 
 
     // resets the entire game takes and takes new random word and the game starts again
@@ -321,8 +314,6 @@ class updatingReset extends keyboard{
         while (x.firstChild) {
             x.removeChild(x.firstChild);
         }
-        x = document.querySelector('.wrongLetterList');
-        x.textContent = "";
         const obj = getInfo();
         obj.then(data => {
         newvariable.getWord(data);
@@ -545,31 +536,20 @@ obj.then(data => {
         {
             let s = e.key;
             let node = document.querySelector('.' + e.key.toLowerCase());
-            if(newvariable.repeat[s.toLowerCase()] >= 0)
+            if(newvariable.repeat[s.toLowerCase()] > 0)
             {
-                console.log(newvariable.success);
-                if(newvariable.repeat[s.toLowerCase()] > 0)
-                {
-                    node.className += " rightLetter";
-                    newvariable.updateLetter(s);
-                }
-                else
-                {
-                    node.className += " wrongLetter";
-                    newvariable.fail++;
-                    newvariable.updateFigure(newvariable.fail);
-                    newvariable.updateWrongLetter(s);
-                }
-                newvariable.repeat[s.toLocaleLowerCase()] = -1;
-                if(newvariable.fail == 6){
-                    alert('Sorry you are hanged !!!!');
-                    newvariable.reset();
-                }
-                else if(newvariable.success == 0){
-                    alert('yay you won !!!!');
-                    wincount++;
-                    newvariable.reset();
-                }
+                node.className += " rightLetter";
+                newvariable.success-=newvariable.repeat[s.toLowerCase()];
+                newvariable.showLetter(s);
             }
+            else if(newvariable.repeat[s.toLowerCase()] == 0)
+            {
+                node.className += " wrongLetter";
+                newvariable.fail++;
+                newvariable.updateFigure(newvariable.fail);
+            }
+            newvariable.repeat[s.toLocaleLowerCase()] = -1;
+            newvariable.result();
         }
+
     }
