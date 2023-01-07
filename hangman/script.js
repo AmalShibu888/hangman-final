@@ -3,30 +3,6 @@ const baseurl = 'http://localhost:8383/'
 
 
 
-// const pool =  require("./module/database2.js");
-// console.log(pool);
-// const { createPool } = require('mysql')
-
-// const pool = createPool({
-//     host: "localhost",
-//     user: "root",
-//     password: "leo10@messi",
-//     database: "wordslist",
-//     connectionLimit: 10
-// })
-
-// pool.query('select * from book1 ORDER BY RANd() LIMIT 1' ,(err ,result ,fields) =>{
-//     if(err)
-//         return console.log(err);
-//     return console.log(result);
-// })
-// readFile('test.txt' ,'utf8' ,(err ,data) =>{
-//     if(err){
-//         console.log(err);
-//         return;
-//     }
-//     console.log(data);
-// })
 
 const wordContainer = document.querySelector('.word');
 const digitalKeyboard = document.querySelectorAll(".alphaKeys");
@@ -45,10 +21,15 @@ const loginSubmitButton = document.querySelector('.loginSubmitButton');
 const usernameInput = document.getElementById('UserName');
 const passwordInput = document.getElementById('passworddec');
 
+const signupInputslots = signupBox.getElementsByTagName('input');
+
+
 const loginusernameInput =document.getElementById('userName')
 const loginpasswordInput =document.getElementById('password')
 
 
+const signupwrongmessage = document.getElementById('signwrongm');
+const loginwrongmessage = document.getElementById('loginwrongm');
 async function getInfo(){
     const res = await fetch(baseurl +'info',{
         method: 'GET'
@@ -64,42 +45,60 @@ async function getInfo(){
 }
 
 
-async function postInfo(e){
-    e.preventDefault();
-    
-    
+async function postInfo(){
+    console.log('y');
     const res = await fetch(baseurl ,{
         method: 'POST',
         headers:{
             "Content-Type" : "application/json"
         },
-        body : JSON.stringify({
-            username : usernameInput.value,
+        body : JSON.stringify(newvariable.signupBoxToJSON())
+    }
+    
+)
+// console.log('usernameInput ',usernameInput.value);
+}
 
-            password : passwordInput.value
+async function postlogout(){
+    console.log('y');
+    const res = await fetch(baseurl + 'logout',{
+        method: 'POST',
+        headers:{
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+            username : userName,
+            winCount : wincount,
+            total : Total - 1
         })
     }
     
 )
-console.log('usernameInput ',usernameInput.value);
+// console.log('usernameInput ',usernameInput.value);
 }
     
 async function getInfo2(e){
     e.preventDefault();
+    loginwrongmessage.textContent = "";
     const res = await fetch(baseurl +'form',{
         method: 'GET'
     })
     
     const data = await res.json();
+    
     console.log(data);
     let status = 0;
     for(let i = 0;i<data.length;i++)
     {
         if(data[i].username == loginusernameInput.value && data[i].password == loginpasswordInput.value)
+        {
             status = 1;
+            
+        }
     }
     if(status == 1)
     {
+        userName = loginusernameInput.value;
         newvariable.displayLogout();
         loginBox.parentElement.style.display = "none";
         loginBox.style.display = "none";
@@ -107,25 +106,29 @@ async function getInfo2(e){
         newvariable.logout();
     }
     else
-        alert("username or password is invalid");
+        loginwrongmessage.textContent = "username or password is invalid";
     
     // console.log("ssm : "+ newvariable.word);
 }
-signupsubmitbutton.addEventListener('click',postInfo)
-//     const data = await res.json();
-//     const arr = ["country" , "Animals"];
-//     const category = arr[Math.floor(Math.random()*arr.length)];
-//     console.log(category)
-//     return data[category];
+
+
+async function getInfo3(){
+    const res = await fetch(baseurl +'form',{
+        method: 'GET'
+    })
     
-//     // console.log("ssm : "+ newvariable.word);
-// }
+    const data = await res.json();
+    return data;
+}
+
+let wincount = 0,Total = 0, userName = "";
 // class to select hide the word
 class SelectedWord{
-
     // get a random word from the database
     getWord(data){
         this.word = data;
+        Total++;
+        console.log("total : " ,Total);
         // const obj = getInfo();
         // obj.then(data => {
         //     this.word = data;
@@ -226,6 +229,8 @@ class keyboard extends SelectedWord{
             }
             else if(newvariable.success == 0){
                 alert('yay you won !!!!');
+                wincount++;
+                console.log("wincount : ",wincount);
                 newvariable.reset();
             }
         }
@@ -342,19 +347,10 @@ class PlayerVerification extends updatingReset {
         this.switchbutton(SignupToSignupButton, loginBox);
     }
 
-//   validating the values written in submit form are allowable
-    signupValidation(){
-        const password = document.querySelector("#passworddec");
-        const confpassword = document.querySelector("#confpassword");
-        if(password.value != confpassword.value)
-        {
-            alert("Password does not match");
-            return false;
-        }
-        return true;
-    }
 
-    // making curnode capable of toggling the newnode popupbox
+
+
+   // making curnode capable of toggling the newnode popupbox
     switchbutton(curnode , newnode){
         curnode.addEventListener('click' , (e)=>{
             const par = curnode.parentNode;
@@ -362,7 +358,7 @@ class PlayerVerification extends updatingReset {
             newnode.style.display = "block";
         })
         
-    }
+    } 
 
 
     // making the close button on the top right corner of every popup box operational
@@ -390,21 +386,72 @@ class PlayerVerification extends updatingReset {
         })
     }
 
-    // make signup possible
-    signup(){
-        // signupsubmitbutton.addEventListener('click', 
-        signupsubmitbutton.addEventListener('click' ,(e)=>{
-        console.log("y");
-            if(this.signupValidation())
+
+    //   validating the values written in submit form are allowable
+    signupValidation(data){
+        const password = document.querySelector("#passworddec");
+        const confpassword = document.querySelector("#confpassword");
+        let stat = true;
+        Array.from(signupInputslots).forEach(e => {
+            if(e.value.trim() == "")
             {
-                this.analogKeyboard();
-                this.displayLogout();
-                signupBox.style.display = "none";
-                signupBox.parentElement.style.display = "none";
-                this.logout();  
+                signupwrongmessage.textContent = "one or more fields are empty";
+                stat = false;
             }
-            e.preventDefault();
-        })
+        });
+        if(stat && password.value != confpassword.value)
+        {
+            signupwrongmessage.textContent = "Password does not match";
+            return false;
+        }
+        if(stat)
+        {
+            data.forEach(e=>{
+                if(e.username == usernameInput.value)
+                {
+                    signupwrongmessage.textContent = 'username already exists';
+                    stat =  false;
+                }
+
+            })
+        }
+        return stat;
+    }
+    // make signup possible
+
+    signupBoxToJSON(){
+        let o = {};
+        Array.from(signupInputslots).forEach(e => {
+            o[e.getAttribute('name')] = e.value;
+        });
+        o.winCount = 0;
+        o.total = 0;
+        // console.log(o);
+        return o;
+    }
+    signup(){
+            signupsubmitbutton.addEventListener('click' ,(e)=>{
+                e.preventDefault();
+                signupwrongmessage.textContent = "";
+                const obj = getInfo3();
+                obj.then(data=>{
+                    console.log(data);
+                    if(this.signupValidation(data))
+                    {
+                        
+                        userName = usernameInput.value;
+                        console.log("y");
+                        postInfo()
+                        this.analogKeyboard();
+                        this.displayLogout();
+                        signupBox.style.display = "none";
+                        signupBox.parentElement.style.display = "none";
+                        this.logout();  
+                    }
+                })
+                
+            })
+        
         return this;
     }
 
@@ -427,7 +474,11 @@ class PlayerVerification extends updatingReset {
     logout(){
         const logoutTriggerButton = document.querySelector('.logout-button');
         logoutTriggerButton.addEventListener('click', (e) =>{
+            postlogout();
             this.displaySignupLogin();
+            wincount = 0;
+            Total = 0;
+            
             this.reset();
         })
         
@@ -516,6 +567,7 @@ obj.then(data => {
                 }
                 else if(newvariable.success == 0){
                     alert('yay you won !!!!');
+                    wincount++;
                     newvariable.reset();
                 }
             }

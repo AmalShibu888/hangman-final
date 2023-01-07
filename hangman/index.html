@@ -10,25 +10,29 @@
 </head>
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <p class="loginSignup-button">
-         <!-- <span class="login-button">Login</span> / <span class="signup-button">Signup</span> -->
-        </p>
+    
     
     <!-- heading -->
-    <h1>HANG MAN</h1>
+    <header>
+        <h1>HANG MAN</h1>
+    </header>
+    <nav>
+    <p class="loginSignup-button"><!-- <span class="login-button">Login</span> / <span class="signup-button">Signup</span> --></p>
+    </nav>
 
     <!-- body of the game -->
-    <div class="game_container">
-        <div class="figure-keyboard">
+    <section class="game_container">
+        <section class="figure-keyboard">
             <!-- svg for making the hanging man body -->
             <svg class="figure-container">
                 <!-- Rod -->
                 <line class="rod" x1="60" y1="20" x2="140" y2="20" />                
                 <line class="rod" x1="60" y1="20" x2="60" y2="230" />
-                <line class="rod" x1="20" y1="230" x2="100" y2="230" />               
-                <circle cx="140" cy="70"  class="try1 figure-part"/>
-                <!-- Head -->
+                <line class="rod" x1="20" y1="230" x2="100" y2="230" />  
                 <line class="rod" x1="140" y1="20" x2="140" y2="50" />
+                
+                <!-- Head -->
+                <circle class="try1 figure-part"/>
                 <!-- Body -->
                 <line x1="140" y1="90" x2="140" y2="150" class="try2 figure-part"/>
                 <!-- Arms -->
@@ -38,8 +42,9 @@
                 <line x1="140" y1="150" x2="120" y2="180" class="try5 figure-part"/>
                 <line x1="140" y1="150" x2="160" y2="180" class="try6 figure-part"/>
             </svg>
+        
             <!-- keyboard of all alphabets -->
-            <div class="keyboard">
+            <article class="keyboard">
                 <div class="row">
                     <button class="alphaKeys a">A</button>
                     <button class="alphaKeys b">B</button>
@@ -72,20 +77,20 @@
                     <button class="alphaKeys y">Y</button>
                     <button class="alphaKeys z">Z</button>
                 </div>
-            </div>
-        </div>
+            </article>
+        </section>
 
         <!-- the hidden word the user need to find  -->
-        <div class="word">
+        <section class="word">
 
-        </div>
+        </section>
         
         <!-- shows all letters that has been tried and turned out to be wrong -->
-        <div class="wrong words">
+        <section class="wrong words">
             <h3>wrong letters</h4>
             <p class="wrongLetterList"></p>
-        </div>
-    </div>
+        </section>
+    </section>
 
     <div class="bgModel">
     <!-- popup for login -->
@@ -97,6 +102,7 @@
         <br>
         <span>password : </span>
         <input type="password" name="" id="password" required>
+        <p id="loginwrongm"></p>
         <button type="submit" class="submitButton loginSubmitButton"> Submit</button>
         <p class="signupLink">Create new account ?</p>
     </form>
@@ -123,12 +129,12 @@
             <br>
 
             <span>password : </span>
-            <input type="password" name="Passw" id="passworddec" required>
+            <input type="password" name="password" id="passworddec" required>
             <br>
 
             <span>Confirm Password : </span>
-            <input type="password" name="ConfPassw" id="confpassword" required>
-
+            <input type="password" name="ConfPassword" id="confpassword" required>
+            <p id="signwrongm"></p>
             <button type="submit" class="submitButton signupSubmitButton"> Submit</button>
             <p class="loginLink">Already have an account ?</p>
             

@@ -35,7 +35,10 @@ h1,h3{
     stroke : black;
     stroke-width : 3
 }
-
+.try1{
+    cx:140;
+    cy: 70;
+}
 
 /* designing keyboard of all alphabets */
 .keyboard{
@@ -184,3 +187,5 @@ h1,h3{
 .loginSignup-button span:hover{
     color: rgb(100, 255, 100);
 }
+
+
