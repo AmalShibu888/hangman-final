@@ -1,0 +1,88 @@
+
+*{
+    box-sizing: border-box;
+    padding: 0px;
+    margin: 0px;
+}
+body{
+    /*The background image can be changed accordingly*/
+    background-image : radial-gradient(rgba(0, 0, 0, 0.377),rgba(38, 38, 38, 0.591)), url("images/imgbg.jpg");
+    /* min-height : 80%; */
+    /* width : 80%; */
+    /* text-align: center; */
+    background-position: center;
+    background-size: cover;
+    /* position: relative; */
+    color: rgb(255, 255, 255);
+    
+}
+.head {
+    text-shadow: 3px 3px 3px red;
+    padding: 40px;
+    text-align: center;
+    font-weight: 2em;
+}
+.loginForm {
+    font-size: 1.5em;
+}
+.signUpForm {
+    font-size: 25px;
+}
+input {
+    font-size: 1em;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.098);
+    border-radius: 30px;
+    border: 2px solid rgba(21, 21, 21, 0.4);
+    color: white;
+    width: 40%;
+
+}
+a {
+    font-size: 18px;
+    color: white;
+}
+.submitButton {
+    font-size: 20px;
+    border-radius: 10px;
+    width :40%;
+    border-radius: 30px;
+    padding: 10px;
+    background-color: darkcyan;
+    cursor: pointer;
+}
+.submitButton:hover {
+    background-color: rgb(141, 28, 0);
+}
+.loginBox {
+    align-self: center;
+    padding: 30px;
+    height: 70vh;
+    width: 200vh;
+    border-radius: 20vh;
+    text-align: center;
+    background-color: rgba(18, 18, 18, 0.409);
+}
+.signUpBox {
+    align-self: center;
+    padding: 30px;
+    height: 120vh;
+    width: 100%;
+    /* border-radius: 20vh; */
+    text-align: center;
+    background-color: rgba(18, 18, 18, 0.409);
+}
+footer{
+    text-align: center;
+    padding: 20px;
+}
+
+#wrongMessage{
+    margin-top: 20px;
+}
+
+.closebutton{
+    text-decoration: none;
+    float: right;
+    margin: 10px;
+}

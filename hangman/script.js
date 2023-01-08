@@ -30,18 +30,24 @@ const loginpasswordInput =document.getElementById('password')
 
 const signupwrongmessage = document.getElementById('signwrongm');
 const loginwrongmessage = document.getElementById('loginwrongm');
+
+
 async function getInfo(){
     const res = await fetch(baseurl +'info',{
         method: 'GET'
     })
     
-    const data = await res.json();
-    const arr = ["country" , "Animals"];
-    const category = arr[Math.floor(Math.random()*arr.length)];
-    console.log(category)
-    return data[category];
-    
-    // console.log("ssm : "+ newvariable.word);
+    let data = await res.json();
+    const arr = ["Countries" , "Animals"];
+    arr.forEach(e =>{
+        if(data[0].hasOwnProperty(e))
+        {
+            // console.log("x");
+            data = data[0][e];
+        }
+    })
+    console.log("y" ,data);
+    newvariable.getWord(data);
 }
 
 
@@ -55,7 +61,9 @@ async function postInfo(){
         body : JSON.stringify(newvariable.signupBoxToJSON())
     }
     
+    
 )
+    console.log(res.body);
 // console.log('usernameInput ',usernameInput.value);
 }
 
@@ -77,40 +85,7 @@ async function postlogout(){
 // console.log('usernameInput ',usernameInput.value);
 }
     
-async function getInfo2(e){
-    e.preventDefault();
-    loginwrongmessage.textContent = "";
-    
-    const res = await fetch(baseurl +'form',{
-        method: 'GET'
-    })
-    console.log("k");
-    const data = await res.json();
-    
-    console.log(data);
-    let status = 0;
-    for(let i = 0;i<data.length;i++)
-    {
-        if(data[i].username == loginusernameInput.value && data[i].password == loginpasswordInput.value)
-        {
-            status = 1;
-            
-        }
-    }
-    if(status == 1)
-    {
-        userName = loginusernameInput.value;
-        newvariable.displayLogout();
-        loginBox.parentElement.style.display = "none";
-        loginBox.style.display = "none";
-        newvariable.analogKeyboard();
-        newvariable.logout();
-    }
-    else
-        loginwrongmessage.textContent = "username or password is invalid";
-    
-    // console.log("ssm : "+ newvariable.word);
-}
+
 
 
 async function getInfo3(){
@@ -127,7 +102,7 @@ let wincount = 0,Total = 0, userName = "";
 class SelectedWord{
     // get a random word from the database
     getWord(data){
-        console.log(data);
+        console.log("z" ,data);
         this.word = data;
         Total++;
         this.hideWord();
@@ -182,6 +157,7 @@ class Keyboard extends SelectedWord{
     digitalKeyboard(){
         digitalKeyboard.forEach((e)=>{
                 e.addEventListener('click',(x)=>{
+                    console.log("y");
                 this.updateKeyboard_ShowLetter_updateFigure(e.textContent , e);
                 this.result();
             })
@@ -315,9 +291,9 @@ class updatingReset extends Keyboard{
             x.removeChild(x.firstChild);
         }
         const obj = getInfo();
-        obj.then(data => {
-        newvariable.getWord(data);
-})
+//         obj.then(data => {
+//         newvariable.getWord(data);
+// })
     }
 }
 
@@ -448,7 +424,7 @@ class PlayerVerification extends updatingReset {
 
 // make login possible
     login(){
-        loginSubmitButton.addEventListener('click', getInfo2);
+        // loginSubmitButton.addEventListener('click', getInfo2);
         // (e)=>{
             // e.preventDefault();
             // this.displayLogout();
@@ -480,18 +456,21 @@ class PlayerVerification extends updatingReset {
     displaySignupLogin(){
         const par = document.querySelector('.loginSignup-button');
         par.innerHTML = ""
-        let x = document.createElement('span');
+        let x = document.createElement('a');
+        x.setAttribute('href' , "login.html");
         x.className = "login-button";
         x.textContent = "Login"
         par.appendChild(x);
-        this.buttonWork(x , loginBox);
+        // this.buttonWork(x , loginBox);
         x = document.createTextNode('/');
         par.appendChild(x);
-        x = document.createElement('span');
+        
+        x = document.createElement('a');
+        x.setAttribute('href' , "signUp.html");
         x.className = "signup-button";
         x.textContent = "Signup"
         par.appendChild(x);
-        this.buttonWork(x , signupBox);
+        // this.buttonWork(x , signupBox);
     }
 
     // display logout button
@@ -512,13 +491,10 @@ class PlayerVerification extends updatingReset {
 const newvariable = new PlayerVerification;
 newvariable.init();
 
-newvariable.signup().login();
+newvariable.signup().login().digitalKeyboard().analogKeyboard();
 
 
 const obj = getInfo();
-obj.then(data => {
-    newvariable.getWord(data).digitalKeyboard().analogKeyboard();
-})
 
     
 

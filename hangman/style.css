@@ -183,9 +183,12 @@ h1,h3{
     cursor: pointer;
     font-size: 1.2rem;
 }
-
-.loginSignup-button span:hover{
+.loginSignup-button a{
+    text-decoration: none;
+}
+.loginSignup-button a:hover{
     color: rgb(100, 255, 100);
 }
+
 
 
