@@ -32,6 +32,7 @@ const signupwrongmessage = document.getElementById('signwrongm');
 const loginwrongmessage = document.getElementById('loginwrongm');
 
 
+// console.log(logoutTriggerButton);
 async function getInfo(){
     const res = await fetch(baseurl +'info',{
         method: 'GET'
@@ -194,6 +195,15 @@ class Keyboard extends SelectedWord{
 }
 
 
+async function postupdate(){
+    const res = await fetch(baseurl + 'update',{
+        method :'POST',
+        headers :{
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(newvariable.loginfo)
+    })
+}
 
 // updating the figure the analog keyboard and the wrong letters slots with each press
 class updatingReset extends Keyboard{
@@ -203,11 +213,16 @@ class updatingReset extends Keyboard{
         console.log(this.fail, "  ",this.success);
         if(this.fail == 6)
         {
+            this.loginfo.total++;
+            postupdate();
             this.reset();
             alert("Sorry you are hanged");
         }
         else if(this.success == 0)
         {
+            this.loginfo.total++;
+            this.loginfo.winCount++;
+            postupdate();
             this.reset();
             alert("Yay you won !!!!!");
             wincount++;
@@ -301,151 +316,177 @@ class updatingReset extends Keyboard{
 
 
 // import { workSheet } from "./users.js";
+async function getstat(){
+    const res = await fetch(baseurl + 'stat' ,{
+        method:'GET'
+    });
+    const data = await res.json();
+    // newvariable.logstat = data.stat;
+    newvariable.loginfo = data;
+    if(newvariable.loginfo.stat)
+            newvariable.displayLogout();
+    else
+        newvariable.displaySignupLogin();
+        // this.closebutton();
+}
 
-
+// async function sendstat(){
+//     const res = await fetch(baseurl +"stat" ,{
+//         method : "POST",
+//         headers :{
+//             "Content-Type" : "application/json"
+//         },
+//         body : JSON.stringify({stat : false})
+//     });
+// }
 class PlayerVerification extends updatingReset {
 
     // making all popup as well as buttons associated with it except submit button operational
     init(){
-        this.logstat = 0;
-        this.displaySignupLogin();
-        this.closebutton();
-        this.switchbutton(LoginToSignupButton , signupBox);
-        this.switchbutton(SignupToSignupButton, loginBox);
+        this.loginfo;
+        // this.logstat = 0;
+        getstat();
+        // if(this.loginfo.stat)
+        //     this.displayLogout();
+        // else
+        //     this.displaySignupLogin();
+        // this.closebutton();
+        
+        // this.switchbutton(LoginToSignupButton , signupBox);
+        // this.switchbutton(SignupToSignupButton, loginBox);
     }
 
 
 
 
    // making curnode capable of toggling the newnode popupbox
-    switchbutton(curnode , newnode){
-        curnode.addEventListener('click' , (e)=>{
-            const par = curnode.parentNode;
-            par.style.display = "none";
-            newnode.style.display = "block";
-        })
+    // switchbutton(curnode , newnode){
+    //     curnode.addEventListener('click' , (e)=>{
+    //         const par = curnode.parentNode;
+    //         par.style.display = "none";
+    //         newnode.style.display = "block";
+    //     })
         
-    } 
+    // } 
 
 
     // making the close button on the top right corner of every popup box operational
-    closebutton(){
+    // closebutton(){
         
-        BoxCloseButtons.forEach(button=> {
-            // console.log("y");
-                button.addEventListener('click' , (e)=>{
-                document.addEventListener('keypress' , updateAnalogKeyboard);
-                const par = button.parentNode;
-                par.style.display = "none";
-                par.parentNode.style.display = "none";
-            })
-        });
-    }
+    //     BoxCloseButtons.forEach(button=> {
+    //         // console.log("y");
+    //             button.addEventListener('click' , (e)=>{
+    //             document.addEventListener('keypress' , updateAnalogKeyboard);
+    //             const par = button.parentNode;
+    //             par.style.display = "none";
+    //             par.parentNode.style.display = "none";
+    //         })
+    //     });
+    // }
     
     
-    // making the login/signup button(button) on top right corner of the screen operational ie toggle the respective form (box)
-    buttonWork(button , box){
-            button.addEventListener('click' ,(e) =>{
-            document.removeEventListener('keypress' , updateAnalogKeyboard);
-            const par =   box.parentNode;
-            par.style.display = "flex";
-            box.style.display = "block";
-        })
-    }
+    // // making the login/signup button(button) on top right corner of the screen operational ie toggle the respective form (box)
+    // buttonWork(button , box){
+    //         button.addEventListener('click' ,(e) =>{
+    //         document.removeEventListener('keypress' , updateAnalogKeyboard);
+    //         const par =   box.parentNode;
+    //         par.style.display = "flex";
+    //         box.style.display = "block";
+    //     })
+    // }
 
 
     //   validating the values written in submit form are allowable
-    signupValidation(data){
-        const password = document.querySelector("#passworddec");
-        const confpassword = document.querySelector("#confpassword");
-        let stat = true;
-        Array.from(signupInputslots).forEach(e => {
-            if(e.value.trim() == "")
-            {
-                signupwrongmessage.textContent = "one or more fields are empty";
-                stat = false;
-            }
-        });
-        if(stat && password.value != confpassword.value)
-        {
-            signupwrongmessage.textContent = "Password does not match";
-            return false;
-        }
-        if(stat)
-        {
-            data.forEach(e=>{
-                if(e.username == usernameInput.value)
-                {
-                    signupwrongmessage.textContent = 'username already exists';
-                    stat =  false;
-                }
+    // signupValidation(data){
+    //     const password = document.querySelector("#passworddec");
+    //     const confpassword = document.querySelector("#confpassword");
+    //     let stat = true;
+    //     Array.from(signupInputslots).forEach(e => {
+    //         if(e.value.trim() == "")
+    //         {
+    //             signupwrongmessage.textContent = "one or more fields are empty";
+    //             stat = false;
+    //         }
+    //     });
+    //     if(stat && password.value != confpassword.value)
+    //     {
+    //         signupwrongmessage.textContent = "Password does not match";
+    //         return false;
+    //     }
+    //     if(stat)
+    //     {
+    //         data.forEach(e=>{
+    //             if(e.username == usernameInput.value)
+    //             {
+    //                 signupwrongmessage.textContent = 'username already exists';
+    //                 stat =  false;
+    //             }
 
-            })
-        }
-        return stat;
-    }
+    //         })
+    //     }
+    //     return stat;
+    // }
     // make signup possible
 
-    signupBoxToJSON(){
-        let o = {};
-        Array.from(signupInputslots).forEach(e => {
-            o[e.getAttribute('name')] = e.value;
-        });
-        o.winCount = 0;
-        o.total = 0;
-        // console.log(o);
-        return o;
-    }
-    signup(){
-            signupsubmitbutton.addEventListener('click' ,(e)=>{
-                e.preventDefault();
-                signupwrongmessage.textContent = "";
-                const obj = getInfo3();
-                obj.then(data=>{
-                    console.log(data);
-                    if(this.signupValidation(data))
-                    {
+    // signupBoxToJSON(){
+    //     let o = {};
+    //     Array.from(signupInputslots).forEach(e => {
+    //         o[e.getAttribute('name')] = e.value;
+    //     });
+    //     o.winCount = 0;
+    //     o.total = 0;
+    //     // console.log(o);
+    //     return o;
+    // }
+    // signup(){
+    //         signupsubmitbutton.addEventListener('click' ,(e)=>{
+    //             e.preventDefault();
+    //             signupwrongmessage.textContent = "";
+    //             const obj = getInfo3();
+    //             obj.then(data=>{
+    //                 console.log(data);
+    //                 if(this.signupValidation(data))
+    //                 {
                         
-                        userName = usernameInput.value;
-                        console.log("y");
-                        postInfo()
-                        this.analogKeyboard();
-                        this.displayLogout();
-                        signupBox.style.display = "none";
-                        signupBox.parentElement.style.display = "none";
-                        this.logout();  
-                    }
-                })
+    //                     userName = usernameInput.value;
+    //                     console.log("y");
+    //                     postInfo()
+    //                     this.analogKeyboard();
+    //                     this.displayLogout();
+    //                     signupBox.style.display = "none";
+    //                     signupBox.parentElement.style.display = "none";
+    //                     this.logout();  
+    //                 }
+    //             })
                 
-            })
+    //         })
         
-        return this;
-    }
+    //     return this;
+    // }
 
 // make login possible
-    login(){
-        // loginSubmitButton.addEventListener('click', getInfo2);
-        // (e)=>{
-            // e.preventDefault();
-            // this.displayLogout();
-            // loginBox.parentElement.style.display = "none";
-            // loginBox.style.display = "none";
-            // this.logout();
-        // })
+    // login(){
+    //     // loginSubmitButton.addEventListener('click', getInfo2);
+    //     // (e)=>{
+    //         // e.preventDefault();
+    //         // this.displayLogout();
+    //         // loginBox.parentElement.style.display = "none";
+    //         // loginBox.style.display = "none";
+    //         // this.logout();
+    //     // })
         
-        // this.loginValidation();
-        return this;
-    }
+    //     // this.loginValidation();
+    //     return this;
+    // }
 
     // make logout possible
     logout(){
+        
         const logoutTriggerButton = document.querySelector('.logout-button');
         logoutTriggerButton.addEventListener('click', (e) =>{
-            postlogout();
             this.displaySignupLogin();
-            wincount = 0;
-            Total = 0;
-            
+            this.loginfo.stat = false;
+            // sendstat();
             this.reset();
         })
         
@@ -481,6 +522,7 @@ class PlayerVerification extends updatingReset {
         x.className = "logout-button";
         x.textContent = "Logout"
         par.appendChild(x);
+        this.logout();
     }
 }
 
@@ -491,7 +533,7 @@ class PlayerVerification extends updatingReset {
 const newvariable = new PlayerVerification;
 newvariable.init();
 
-newvariable.signup().login().digitalKeyboard().analogKeyboard();
+newvariable.digitalKeyboard().analogKeyboard();
 
 
 const obj = getInfo();
@@ -510,6 +552,7 @@ const obj = getInfo();
     function updateAnalogKeyboard(e){
         if((e.charCode>64 && e.charCode <91) || (e.charCode >96 && e.charCode <123))
         {
+            console.log("xxx");
             let s = e.key;
             let node = document.querySelector('.' + e.key.toLowerCase());
             if(newvariable.repeat[s.toLowerCase()] > 0)

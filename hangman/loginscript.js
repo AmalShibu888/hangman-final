@@ -31,6 +31,14 @@ async function getInfo(e){
         // console.log(data.length);
     }
     else{
+        const up = await fetch(baseurl + 'stat' , {
+            method : 'POST',
+            headers :{
+                'Content-Type': "application/json"
+            },
+            body : JSON.stringify({stat : true})
+    
+        })
         document.location.href = "index.html";
     }
     

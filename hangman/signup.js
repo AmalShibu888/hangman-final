@@ -34,7 +34,6 @@ async function getInfo(e){
         // console.log('x');
     }
     else if(newvariable.Authentication()){
-        // document.location.href = "index.html";
         const input = await fetch(baseurl  + "database",{
             method : "POST",
             headers :{
@@ -43,6 +42,8 @@ async function getInfo(e){
             body : JSON.stringify(newvariable.signupBoxToJSON())
         } )
         console.log("y");
+        document.location.href = "index.html";
+
     }
     
     // console.log("ssm : "+ newvariable.word);

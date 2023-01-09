@@ -56,7 +56,8 @@ app.get('/info' , (req,res) =>{
 
 
 
-let user = {username : "",password : ""};
+let user = {username : "",password : "",winCount : 0,total :0,stat :false};
+// let stat = false;
 app.post('/form' ,(req,res)=>{
     user.username = req.body.username;
     user.password = req.body.password;
@@ -69,21 +70,60 @@ app.get('/form' , (req,res) =>{
             res.end();
             return;
         }
-        console.log(data);
+        // console.log(data);
+        if(data.length == 1)
+            user.stat = true;
+        user.winCount = data[0].winCount;
+        user.total = data[0].total;
         res.send(JSON.stringify(data));
+        // console.log(user);
     })
+    
     
 })
 
+app.post('/stat' ,(req , res)=>{
+    user.stat = req.body.stat;
+    console.log('stat : ',user);
+    res.status(200).send({statusk
+        : 'recieved'});
+})
+
+app.get('/stat' ,(req,res) =>{
+    res.send(user);
+})
 
 
+app.post('/update' , (req,res)=>{
+    user = req.body;
+    console.log('statssss : ',user);
+    if(user.stat)
+    {
+        database.find({username : user.username},(err,docs)=>{
+            if(err)
+            {
+                res.end();
+                return;
+            }
+            const tuple = docs[0];
+            tuple.winCount = user.winCount;
+            tuple.total = user.total;
+            console.log(docs);
+            database.update({ username: user.username }, tuple, {}, function (err, numReplaced) {});
+            database.loadDatabase();
+        })
+    }
+    
+    res.status(200).send({statusk
+        : 'recieved'});
+})
 
 app.post('/database',(req,res)=>{
     // const {username , password,winCount} = req.body;
     console.log(req.body);
     database.insert(req.body)
-    // if(!username || !password)
-    //     return res.status(400).send({status :'failed'});
+    stat = true;
+    
     res.status(200).send({statusk
          : 'recieved'});
     // console.log(info);
@@ -92,18 +132,18 @@ app.post('/database',(req,res)=>{
 app.post('/logout' ,(req,res) =>{
     console.log(req.body);
         const data = req.body;
-            database.find({username : data.username},(err,docs)=>{
-                if(err)
-                {
-                    res.end();
-                    return;
-                }
-                const tuple = docs[0];
-                tuple.winCount += data.winCount;
-                tuple.total += data.total;
-                console.log(docs);
-                database.update({ username: data.username }, tuple, {}, function (err, numReplaced) {});
-                database.loadDatabase();
-            })
+        database.find({username : data.username},(err,docs)=>{
+            if(err)
+            {
+                res.end();
+                return;
+            }
+            const tuple = docs[0];
+            tuple.winCount += data.winCount;
+            tuple.total += data.total;
+            console.log(docs);
+            database.update({ username: data.username }, tuple, {}, function (err, numReplaced) {});
+            database.loadDatabase();
+        })
     // console.log(info);
 })
