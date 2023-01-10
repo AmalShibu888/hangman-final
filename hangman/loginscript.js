@@ -23,10 +23,12 @@ async function getInfo(e){
         method: 'GET'
     })
     // console.log("k");
+
     let data = await res.json()
     
     // console.log(data);
-    if( data.length >0 && !newvariable.Authentication(data[0])){
+    // let stat = false;
+    if( data.length == 0 || !newvariable.Authentication(data[0])){
         wrongmessage.textContent = "username or password is invalid";
         // console.log(data.length);
     }

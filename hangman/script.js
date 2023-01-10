@@ -6,33 +6,13 @@ const baseurl = 'http://localhost:8383/'
 
 const wordContainer = document.querySelector('.word');
 const digitalKeyboard = document.querySelectorAll(".alphaKeys");
- 
-const signupBox = document.querySelector('.signuppop');
-const loginBox = document.querySelector('.loginpop');
-
-const LoginToSignupButton =  document.querySelector('.signupLink');
-const SignupToSignupButton =  document.querySelector('.loginLink');
-
-const BoxCloseButtons = document.querySelectorAll('.popup-close');
-
-const signupsubmitbutton = document.querySelector('.signupSubmitButton');
-const loginSubmitButton = document.querySelector('.loginSubmitButton');
-
-const usernameInput = document.getElementById('UserName');
-const passwordInput = document.getElementById('passworddec');
-
-const signupInputslots = signupBox.getElementsByTagName('input');
-
-
-const loginusernameInput =document.getElementById('userName')
-const loginpasswordInput =document.getElementById('password')
-
-
-const signupwrongmessage = document.getElementById('signwrongm');
-const loginwrongmessage = document.getElementById('loginwrongm');
-
-
+const multibutton = document.getElementById('multi');
+const par = document.querySelector('.loginSignup-button');
 // console.log(logoutTriggerButton);
+
+
+
+
 async function getInfo(){
     const res = await fetch(baseurl +'info',{
         method: 'GET'
@@ -213,16 +193,36 @@ class updatingReset extends Keyboard{
         console.log(this.fail, "  ",this.success);
         if(this.fail == 6)
         {
-            this.loginfo.total++;
-            postupdate();
+            if(this.loginfo.stat)
+            {
+                this.loginfo.total++;
+                postupdate();
+            }
             this.reset();
             alert("Sorry you are hanged");
+
+            if(this.state >0)
+            {
+                this.state++;
+                if(this.state == 2)
+                    this.player2 = prompt("Enter your Name");
+            }
+            if(this.state == 3)
+                this.displayRes();
         }
         else if(this.success == 0)
         {
-            this.loginfo.total++;
-            this.loginfo.winCount++;
-            postupdate();
+            console.log(this.loginfo);
+            if(this.loginfo.stat)
+            {
+                this.loginfo.total++;
+                this.loginfo.winCount++;
+                postupdate();
+            }
+            else if(this.state == 1)
+                this.win1++;
+            else if(this.state == 2)
+                this.win2++;
             this.reset();
             alert("Yay you won !!!!!");
             wincount++;
@@ -284,7 +284,6 @@ class updatingReset extends Keyboard{
 
 
     // resets the entire game takes and takes new random word and the game starts again
-
     reset(){
         this.fail = 0;
         let x = document.querySelectorAll('.rightLetter');
@@ -344,6 +343,7 @@ class PlayerVerification extends updatingReset {
     // making all popup as well as buttons associated with it except submit button operational
     init(){
         this.loginfo;
+        this.state = 0;
         // this.logstat = 0;
         getstat();
         // if(this.loginfo.stat)
@@ -356,8 +356,39 @@ class PlayerVerification extends updatingReset {
         // this.switchbutton(SignupToSignupButton, loginBox);
     }
 
+    multiplayer(){
+        multibutton.addEventListener('click', (e)=>{
+            this.win1 = 0 ;
+            this.win2 = 0;
+            this.state = 1;
+            this.player1 = prompt("Enter your Name");
+            this.player2;
+            par.innerHTML = "";
+            // this.displaySignupLogin();
+            this.loginfo.stat = false;
+            this.reset();
 
 
+
+
+        })
+    }
+
+    displayRes(){
+        // console.log(this.player1);
+        // console.log(this.player2);
+        if(this.win1>this.win2)
+        {
+            alert(`${this.player1} won the match`);
+        }
+        else
+        {
+            alert(`${this.player2} won the match`);
+        }
+        this.displaySignupLogin();
+        this.state = 0;
+
+    }
 
    // making curnode capable of toggling the newnode popupbox
     // switchbutton(curnode , newnode){
@@ -495,7 +526,7 @@ class PlayerVerification extends updatingReset {
 
     // display the signup/ligin button and make them responsive
     displaySignupLogin(){
-        const par = document.querySelector('.loginSignup-button');
+        
         par.innerHTML = ""
         let x = document.createElement('a');
         x.setAttribute('href' , "login.html");
@@ -516,7 +547,6 @@ class PlayerVerification extends updatingReset {
 
     // display logout button
     displayLogout(){
-        const par = document.querySelector('.loginSignup-button');
         par.innerHTML = ""
         let x = document.createElement('span');
         x.className = "logout-button";
@@ -533,7 +563,7 @@ class PlayerVerification extends updatingReset {
 const newvariable = new PlayerVerification;
 newvariable.init();
 
-newvariable.digitalKeyboard().analogKeyboard();
+newvariable.digitalKeyboard().analogKeyboard().multiplayer();
 
 
 const obj = getInfo();

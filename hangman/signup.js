@@ -28,12 +28,14 @@ async function getInfo(e){
     // console.log("k");
     let data = await res.json();
     
-    console.log(data);
+    // console.log("xxx" ,data);
+    // let stat  = false;
     if(data.length > 0){
         wrongmessage.textContent = "username already exists";
-        // console.log('x');
+        console.log('x');
     }
     else if(newvariable.Authentication()){
+        stat = true;
         const input = await fetch(baseurl  + "database",{
             method : "POST",
             headers :{
@@ -41,9 +43,8 @@ async function getInfo(e){
             },
             body : JSON.stringify(newvariable.signupBoxToJSON())
         } )
-        console.log("y");
+        // console.log("y");
         document.location.href = "index.html";
-
     }
     
     // console.log("ssm : "+ newvariable.word);
@@ -66,6 +67,7 @@ class signup{
         });
         o.winCount = 0;
         o.total = 0;
+        // o.stat = true;
         // console.log(o);
         return o;
     }

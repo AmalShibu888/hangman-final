@@ -62,21 +62,27 @@ app.post('/form' ,(req,res)=>{
     user.username = req.body.username;
     user.password = req.body.password;
     res.status(200).send({status : 'recieved'})
-    // console.log(user);
+    console.log(user);
 })
 app.get('/form' , (req,res) =>{
+    // console.log("fgbjkdbkjf");
     database.find({username : user.username},(err,data) =>{
+        // console.log("fgbjkdbkjf");
         if(err){
+            console.log(err);
             res.end();
             return;
         }
-        // console.log(data);
+        // console.log("GRTTT",data);
         if(data.length == 1)
-            user.stat = true;
-        user.winCount = data[0].winCount;
-        user.total = data[0].total;
+        {
+            user.winCount = data[0].winCount;
+            user.total = data[0].total;
+        }
+        else
+            user.stat = false;
         res.send(JSON.stringify(data));
-        // console.log(user);
+        console.log("user1 : ",user);
     })
     
     
@@ -90,6 +96,7 @@ app.post('/stat' ,(req , res)=>{
 })
 
 app.get('/stat' ,(req,res) =>{
+    console.log("user : ",user);
     res.send(user);
 })
 
@@ -122,8 +129,7 @@ app.post('/database',(req,res)=>{
     // const {username , password,winCount} = req.body;
     console.log(req.body);
     database.insert(req.body)
-    stat = true;
-    
+    user.stat = true;
     res.status(200).send({statusk
          : 'recieved'});
     // console.log(info);
