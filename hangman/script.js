@@ -446,12 +446,15 @@ class PlayerVerification extends updatingReset {
 
 
     leaderboardinp(data){
-        leaderboardpar[0].innerHTML = "<tr><th>Rank</th><th>User Name</th><th>Total</th><th>Win Count</th>";
+        leaderboardpar[0].innerHTML = `<tr class = "odd"><th>Rank</th><th>User Name</th><th>Total</th><th>Win Count</th>`;
         let outp;
         let n = data.length;
         for(let i = 1;i<=n;i++)
         {
-            outp = `<tr><td>${i}</td><td>${data[n - i].username}</td><td>${data[n - i].total}</td><td>${data[n - i].winCount}</td>`
+            let x = "";
+            if(i%2 == 0)
+                x = `class = "odd"`;
+            outp = `<tr ${x}><td>${i}</td><td>${data[n - i].username}</td><td>${data[n - i].total}</td><td>${data[n - i].winCount}</td>`
             leaderboardpar[0].innerHTML+=outp;
         }
     }
