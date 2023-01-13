@@ -35,7 +35,7 @@ async function getInfo(e){
         console.log('x');
     }
     else if(newvariable.Authentication()){
-        stat = true;
+        // stat = true;
         const input = await fetch(baseurl  + "database",{
             method : "POST",
             headers :{

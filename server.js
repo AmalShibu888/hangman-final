@@ -25,14 +25,6 @@ app.get('/' ,(req,res) =>{
     res.sendFile(`${publicpath}/index.html`);
 })
 
-app.get('/login' ,(req,res) =>{
-    res.sendFile(`${publicpath}/login.html`);
-})
-
-app.get('/signup' ,(req,res) =>{
-    res.sendFile(`${publicpath}/signUp.html`);
-})
-
 
 app.get('/info' , (req,res) =>{
     // res.send({name : 'hello'});
@@ -56,7 +48,7 @@ app.get('/info' , (req,res) =>{
 
 
 
-let user = {username : "",password : "",winCount : 0,total :0,stat :false};
+let user = {username : "",password : "",winCount : 0,total :0,stat :0};
 // let stat = false;
 app.post('/form' ,(req,res)=>{
     user.username = req.body.username;
@@ -104,7 +96,7 @@ app.get('/stat' ,(req,res) =>{
 app.post('/update' , (req,res)=>{
     user = req.body;
     console.log('statssss : ',user);
-    if(user.stat)
+    if(user.stat == 1)
     {
         database.find({username : user.username},(err,docs)=>{
             if(err)
@@ -129,27 +121,36 @@ app.post('/database',(req,res)=>{
     // const {username , password,winCount} = req.body;
     console.log(req.body);
     database.insert(req.body)
-    user.stat = true;
+    user.stat = 1;
     res.status(200).send({statusk
          : 'recieved'});
     // console.log(info);
 } )
 
-app.post('/logout' ,(req,res) =>{
-    console.log(req.body);
-        const data = req.body;
-        database.find({username : data.username},(err,docs)=>{
-            if(err)
-            {
-                res.end();
-                return;
-            }
-            const tuple = docs[0];
-            tuple.winCount += data.winCount;
-            tuple.total += data.total;
-            console.log(docs);
-            database.update({ username: data.username }, tuple, {}, function (err, numReplaced) {});
-            database.loadDatabase();
-        })
-    // console.log(info);
+
+app.get('/leaderboard', (req,res)=>{
+    database.find({}).sort({winCount : 1}).limit(10).exec((err,docs)=>{
+        if(err)
+            console.log(err);
+        else
+            res.send(docs);
+    })
 })
+// app.post('/logout' ,(req,res) =>{
+//     console.log(req.body);
+//         const data = req.body;
+//         database.find({username : data.username},(err,docs)=>{
+//             if(err)
+//             {
+//                 res.end();
+//                 return;
+//             }
+//             const tuple = docs[0];
+//             tuple.winCount += data.winCount;
+//             tuple.total += data.total;
+//             console.log(docs);
+//             database.update({ username: data.username }, tuple, {}, function (err, numReplaced) {});
+//             database.loadDatabase();
+//         })
+//     // console.log(info);
+// })

@@ -6,33 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>hang man</title>
     <link rel="stylesheet" href="style.css">
-    
+    <script src="https://kit.fontawesome.com/4ed2b56512.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-    
-    
-    <!-- heading -->
-    <header>
-        <h1>HANG MAN</h1>
-    </header>
+   
     <nav>
-    <p class="loginSignup-button"><!-- <span class="login-button">Login</span> / <span class="signup-button">Signup</span> --></p>
+        <p class = "loginSignup-button"></p>
     </nav>
-    <button id="multi">Multiplayer</button>;
+    
+    
     <!-- body of the game -->
-    <section class="game_container">
-        <section class="figure-keyboard">
+    <div class="game_container">
+        <!-- heading -->
+        <h1>HANG MAN</h1>
+        <div class="figure-keyboard">
             <!-- svg for making the hanging man body -->
             <svg class="figure-container">
                 <!-- Rod -->
                 <line class="rod" x1="60" y1="20" x2="140" y2="20" />                
                 <line class="rod" x1="60" y1="20" x2="60" y2="230" />
-                <line class="rod" x1="20" y1="230" x2="100" y2="230" />  
-                <line class="rod" x1="140" y1="20" x2="140" y2="50" />
-                
+                <line class="rod" x1="20" y1="230" x2="100" y2="230" />               
+                <circle cx="140" cy="70"  class="try1 figure-part"/>
                 <!-- Head -->
-                <circle class="try1 figure-part"/>
+                <line class="rod" x1="140" y1="20" x2="140" y2="50" />
                 <!-- Body -->
                 <line x1="140" y1="90" x2="140" y2="150" class="try2 figure-part"/>
                 <!-- Arms -->
@@ -41,10 +38,9 @@
                 <!-- Legs -->
                 <line x1="140" y1="150" x2="120" y2="180" class="try5 figure-part"/>
                 <line x1="140" y1="150" x2="160" y2="180" class="try6 figure-part"/>
-            </svg>
-        
+            </svg><br><br>
             <!-- keyboard of all alphabets -->
-            <article class="keyboard">
+            <div class="keyboard">
                 <div class="row">
                     <button class="alphaKeys a">A</button>
                     <button class="alphaKeys b">B</button>
@@ -77,21 +73,70 @@
                     <button class="alphaKeys y">Y</button>
                     <button class="alphaKeys z">Z</button>
                 </div>
-            </article>
-        </section>
+            </div>
+        </div>
 
         <!-- the hidden word the user need to find  -->
-        <section class="word">
-
-        </section>
+        <div class="word">
+        </div>
         
+        <!--<button class="stopB">stop</button>-->
+    </div>
+    <button id="multi">Multiplayer</button>
+
+    <section id="multinfo">
+        <div class="player1">
+            <h3 id="player1name">Player1</h3>
+            <h3 id="player1score">0</h3>
+        </div>
+        <div class="player2">
+            <h3 id="player2name">Player2</h3>
+            <h3 id="player2score">0</h3>
+        </div>
     </section>
 
-    <!-- <div class="bgModel">
-    <form class="popup loginpop">
-    </form>
+    <div class="bgModel">
+        <form class="popup multipop">
+            <h4>Enter your Name</h4>
+            <input type="text" id="name">
+            <button>Submit</button>
+        </form>
 
-    </div>  -->
+        <section class="popup outputpop" id="output">
+            <span id="close-button">x</span>
+            <div class="out"> 
+                <!-- <i class="fa-sharp fa-solid fa-5x fa-circle-xmark"></i> -->
+                
+                <h1 id="message">Hey you Won</h1>               
+            </div>
+            <table id="leaderboard">
+                <tr class="odd">
+                    <th>Rank</th>
+                    <th>User Name</th>
+                    <th>Total</th>
+                    <th>Win Count</th>
+                </tr>
+                <!-- <tr>
+                    <td>1</td>
+                    <td>B20CS036</td>
+                    <td>31</td>
+                    <td>21</td>
+                </tr>
+                <tr class="odd"><td>2</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr><td>3</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr class="odd"><td>4</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr ><td>5</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr class="odd"><td>6</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr><td>7</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr class="odd"><td>8</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr><td>9</td><td>B20CS036</td><td>31</td><td>21</td></tr>
+                <tr class="odd"><td>10</td><td>B20CS036</td><td>31</td><td>21</td></tr> -->
+        
+
+            </table>
+        </section>
+
+    </div> 
 
     <script type="module" src="script.js"></script>
 </body>
