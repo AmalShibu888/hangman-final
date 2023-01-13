@@ -171,7 +171,8 @@ svg {
     width: 100%;
     height: 20vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-around;
     align-items: center;
     
 }
@@ -210,18 +211,8 @@ svg {
 }
 /* styling the popup switch link */
 
-.popup p:hover{
-    color: rgb(61, 252, 61);
-    cursor: pointer;
-}
 
 /* styling close button in the popup */
-.popup-close{
-    background-color: rgb(145, 51, 228);
-    margin-left: 95%;
-    font-size: 1.2rem;
-    border: none;
-}
 
 
 /* styling the input section of the forms */
@@ -231,23 +222,16 @@ svg {
     color: black;
 }
 
-/* styling the submit button of the forms */
-.submitButton{
-    background-color: rgb(89, 5, 167);
+.loginSignup-button{
     padding: 10px;
-    margin: 0 40%;
+    font-size: 1.3em;
 }
 
-/* styling the login/submit button of the forms */
-.loginSignup-button{
-    /* text-align: right; */
-    margin: 10px;
-    cursor: pointer;
-    font-size: 1.2rem;
-}
 
 .loginSignup-button a:hover{
     color: white;
+    cursor: pointer;
+
 }
 
 #multi{

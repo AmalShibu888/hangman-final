@@ -24,7 +24,7 @@ const leaderboardpar = document.getElementsByTagName('tbody');
 // console.log(leaderboardpar);
 
 const outmessage = document.getElementById('message');
-
+const wordmes = document.getElementById('wordmessage');
 
 console.log(outmessage);
 
@@ -165,7 +165,7 @@ class Keyboard extends SelectedWord{
                 e.addEventListener('click',(x)=>{
                     console.log("y");
                 this.updateKeyboard_ShowLetter_updateFigure(e.textContent , e);
-                if(loginfo.stat == 2)
+                if(this.loginfo.stat == 2)
                     this.multiplayerRes()
                 else
                     this.result();
@@ -257,10 +257,10 @@ class updatingReset extends Keyboard{
             {
                 this.loginfo.total++;
                 postupdate()
-                .then(this.resultpop("Sorry you are hanged "))
+                .then(this.resultpop("Sorry you are hanged" , this.word));
             }
             else
-                this.resultpop("Sorry you are hanged");
+                this.resultpop("Sorry you are hanged", this.word);
 
             this.reset();
 
@@ -273,10 +273,10 @@ class updatingReset extends Keyboard{
                 this.loginfo.total++;
                 this.loginfo.winCount++;
                 postupdate()
-                .then(this.resultpop("Yay you won !!!!!"))
+                .then(this.resultpop("Yay you won !!!!!" , ""))
             }
             else
-                this.resultpop("Yay you won !!!!!");
+                this.resultpop("Yay you won !!!!!" , "");
             this.reset();
             
         }
@@ -328,9 +328,11 @@ class updatingReset extends Keyboard{
 
     normalreset(){
         multibutton.style.display = "flex";
-        multinfo.style.display = "none";
         document.getElementById('player1name').textContent = "Player1";
-        document.getElementById('player2name').value = "Player2";
+        document.getElementById('player1score').textContent = "0";
+        document.getElementById('player2name').textContent = "Player2";
+        document.getElementById('player2score').textContent = "0";
+        multinfo.style.display = "none";
         this.loginfo.stat = 0;
         this.displaySignupLogin();
     }
@@ -438,7 +440,7 @@ class PlayerVerification extends updatingReset {
         getstat();
         this.submitmultipop();
         this.closebutton();
-
+        return this;
     }
 
 
@@ -461,16 +463,20 @@ class PlayerVerification extends updatingReset {
                 closebutton.parentNode.style.display = "none";
                 console.log(closebutton.parentNode.parentNode);
                 bgmodel.style.display = "none";
+                body[0].style.overflow = "scroll";
             })
 
     }
 
-    resultpop(message){
+    resultpop(message , wordmessage){
+        wordmes.textContent = "";
         outputpop.style.display = "block";
         bgmodel.style.display = "flex";
         document.removeEventListener('keypress' , updateAnalogKeyboard);
         outmessage.textContent = message;
-
+        body[0].style.overflow = "hidden";
+        if(wordmessage != "")
+            wordmes.textContent = `The word is ${this.word}`;
 
     }
     multiplayer(){
@@ -504,7 +510,7 @@ class PlayerVerification extends updatingReset {
         bgmodel.style.display = "none";
         multiplayPop.style.display = "none";
         console.log(body);
-        body[0].style.overflow = "none";
+        body[0].style.overflow = "scroll";
         document.addEventListener('keypress' , updateAnalogKeyboard); 
     }
     submitmultipop(){
@@ -540,14 +546,14 @@ class PlayerVerification extends updatingReset {
         // console.log(this.player2);
         if(this.win1>this.win2)
         {
-            this.resultpop(`${this.player1} won the match`);
+            this.resultpop(`${this.player1} won the match` ,"");
         }
         else if(this.win1<this.win2)
         {
-            this.resultpop(`${this.player2} won the match`);
+            this.resultpop(`${this.player2} won the match`,"");
         }
         else
-            this.resultpop(`Match is a draw`);
+            this.resultpop(`Match is a draw`,"");
         
         
         this.normalreset();
@@ -704,10 +710,9 @@ class PlayerVerification extends updatingReset {
 
 const newvariable = new PlayerVerification;
 const obj = getInfo();
-obj.then(newvariable.init())
+obj.then(newvariable.init().digitalKeyboard().analogKeyboard().multiplayer())
 
 
-newvariable.digitalKeyboard().analogKeyboard().multiplayer();
 
 getleaderboard();
 
