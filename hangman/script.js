@@ -14,11 +14,14 @@ const bgmodel = document.querySelector('.bgModel');
 const body = document.getElementsByTagName('body');
 
 const subutton = multiplayPop.querySelector('button');
-const names = document.getElementById('name');
+const player1name = document.getElementById('player1nameinp');
+const player2name = document.getElementById('player2nameinp');
+console.log(player1name);
 
 const closebutton = document.getElementById('close-button');
 const outputpop = document.querySelector('.outputpop')
 const multinfo = document.getElementById('multinfo');
+const multiturns = document.getElementById('multiturns');
 
 const leaderboardpar = document.getElementsByTagName('tbody');
 // console.log(leaderboardpar);
@@ -26,10 +29,13 @@ const leaderboardpar = document.getElementsByTagName('tbody');
 const outmessage = document.getElementById('message');
 const wordmes = document.getElementById('wordmessage');
 
-console.log(outmessage);
+const wordinp = document.getElementById('multiword');
+const wordsub = document.getElementById('wordsub');
+const wordpop = document.querySelector('.wordpop');
+// console.log(wordpop);
+const addname = document.getElementById('addname');
 
-
-
+const wordwrongmess = document.getElementById('wordwrongmess');
 
 async function getInfo(){
     const res = await fetch(baseurl +'info',{
@@ -50,60 +56,59 @@ async function getInfo(){
 }
 
 
-async function postInfo(){
-    console.log('y');
-    const res = await fetch(baseurl ,{
-        method: 'POST',
-        headers:{
-            "Content-Type" : "application/json"
-        },
-        body : JSON.stringify(newvariable.signupBoxToJSON())
-    }
-    
-    
-)
-    console.log(res.body);
-// console.log('usernameInput ',usernameInput.value);
-}
-
-async function postlogout(){
-    console.log('y');
-    const res = await fetch(baseurl + 'logout',{
-        method: 'POST',
-        headers:{
-            "Content-Type" : "application/json"
-        },
-        body : JSON.stringify({
-            username : userName,
-            winCount : wincount,
-            total : Total - 1
-        })
-    }
-    
-)
-// console.log('usernameInput ',usernameInput.value);
-}
-    
-
-
-
-async function getInfo3(){
-    const res = await fetch(baseurl +'form',{
-        method: 'GET'
-    })
-    
+async function getstat(){
+    const res = await fetch(baseurl + 'stat' ,{
+        method:'GET'
+    });
     const data = await res.json();
-    return data;
+    // newvariable.logstat = data.stat;
+    newvariable.loginfo = data;
+    if(newvariable.loginfo.stat == 1)
+            newvariable.displayLogout();
+    else if(newvariable.loginfo.stat == 0)
+        newvariable.displaySignupLogin();
+        // this.closebutton();
 }
 
-let wincount = 0,Total = 0, userName = "";
+async function poststat(){
+    const res = await fetch(baseurl + 'stat' ,{
+        method:'POST',
+            headers :{
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({stat : newvariable.loginfo.stat})
+        })
+        
+    };
+async function postupdate(){
+    const res = await fetch(baseurl + 'update',{
+        method :'POST',
+        headers :{
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify(newvariable.loginfo)
+    })
+    getleaderboard();
+    console.log("yy" ,res);
+}
+
+
+
+async function getleaderboard(){
+    const res = await fetch(baseurl + 'leaderboard', {
+        method : 'GET'
+    })
+    const data = await res.json();
+    console.log(data);
+    newvariable.leaderboardinp(data);
+}
+
 // class to select hide the word
 class SelectedWord{
     // get a random word from the database
     getWord(data){
         console.log("z" ,data);
         this.word = data;
-        Total++;
         this.hideWord();
         this.noOfRepeat();
         return this;
@@ -203,84 +208,12 @@ class Keyboard extends SelectedWord{
 }
 
 
-async function postupdate(){
-    const res = await fetch(baseurl + 'update',{
-        method :'POST',
-        headers :{
-            "Content-Type" : "application/json"
-        },
-        body : JSON.stringify(newvariable.loginfo)
-    })
-    getleaderboard();
-    console.log("yy" ,res);
-}
+
 
 // updating the figure the analog keyboard and the wrong letters slots with each press
 class updatingReset extends Keyboard{
 
-    multiplayerRes(){
-         // console.log(this.fail, "  ",this.success);
-         if(this.fail == 6)
-         {
-             this.reset();
-            this.player++;
-                 if(this.player == 2)
-                     this.displaymultipop();
-                else
-                     this.displayRes();
-         }
-         else if(this.success == 0)
-        {
-            // console.log(this.loginfo);
-            let pos;
-            if(this.player == 1)
-            {
-                this.win1++;
-                pos = document.getElementById('player1score');
-                pos.textContent = this.win1;
-            }
-            else if(this.player == 2)
-            {
-                this.win2++;
-                pos = document.getElementById('player2score');
-                pos.textContent = this.win2;
-            }
-            
-            this.multiplayerReset();
-        }
-    }
-    result(){
-        // console.log(this.fail, "  ",this.success);
-        if(this.fail == 6)
-        {
-            if(this.loginfo.stat == 1)
-            {
-                this.loginfo.total++;
-                postupdate()
-                .then(this.resultpop("Sorry you are hanged" , this.word));
-            }
-            else
-                this.resultpop("Sorry you are hanged", this.word);
 
-            this.reset();
-
-        }
-        else if(this.success == 0)
-        {
-            console.log(this.loginfo);
-            if(this.loginfo.stat == 1)
-            {
-                this.loginfo.total++;
-                this.loginfo.winCount++;
-                postupdate()
-                .then(this.resultpop("Yay you won !!!!!" , ""))
-            }
-            else
-                this.resultpop("Yay you won !!!!!" , "");
-            this.reset();
-            
-        }
-    }
     // updating the figure in accordance with the current state
     updateFigure(x){
         if(x == 1){
@@ -353,17 +286,21 @@ class updatingReset extends Keyboard{
     }
 
     multiplayerReset(){
-        
+        this.fail = 0;
         this.keyboardCorReset();
         this.keyboardWrongReset();
         this.hideWordReset();
-        const obj = getInfo();
-        if(this.fail == 0)
+        this.figureReset();
+        if(this.turns > 0)
         {
-            this.figureReset();
-            this.fail = 0;
+            this.displaywordpop();
+            // console.log("y");
+            // this.turns--;
         }
-        
+        else if(this.turns1 > 0)
+        {
+            this.displaywordpop();
+        }
     }
 
     keyboardCorReset(){
@@ -398,53 +335,117 @@ class updatingReset extends Keyboard{
 
 
 // import { workSheet } from "./users.js";
-async function getstat(){
-    const res = await fetch(baseurl + 'stat' ,{
-        method:'GET'
-    });
-    const data = await res.json();
-    // newvariable.logstat = data.stat;
-    newvariable.loginfo = data;
-    if(newvariable.loginfo.stat == 1)
-            newvariable.displayLogout();
-    else if(newvariable.loginfo.stat == 0)
-        newvariable.displaySignupLogin();
-        // this.closebutton();
+
+
+class Results extends updatingReset{
+    
+    multiplayerRes(){
+        // console.log(this.fail, "  ",this.success);
+
+        
+
+        if(this.fail == 6)
+        {
+            console.log('ccc');
+            if(this.turns == 1)
+                this.player++;
+            if(this.turns >0)
+            {
+                this.win1++;
+                this.turns--;
+            }
+            else if(this.turns1 > 0)
+            {
+                this.win2++;
+                this.turns1--;
+            }
+
+
+
+            if(this.turns1 == 0)
+                this.displayRes();
+            
+        //    this.player++;
+            // this.multiplayerReset();
+            this.multiplayerReset();
+            this.updatewincount();
+            // this.displayRes();
+        }
+        else if(this.success == 0)
+       {
+           console.log(this.win2);
+           if(this.turns == 1)
+                this.player++;
+
+            if(this.turns >0)
+            {
+                this.win2++;
+                this.turns--;
+            }
+            else if(this.turns1 > 0)
+            {
+                this.win1++;
+                this.turns1--;
+            }
+            
+            if(this.turns1 == 0)
+            {
+                console.log("turns1" + this.turns);
+                this.displayRes();
+            }
+
+
+            this.multiplayerReset();
+            this.updatewincount();
+        }
+        
+        
+   }
+
+   updatewincount(){
+        let pos;
+           pos = document.getElementById('player1score');
+           pos.textContent = this.win1;
+           pos = document.getElementById('player2score');
+           pos.textContent = this.win2;
+            this.multiplayerReset();
+   }
+   result(){
+       // console.log(this.fail, "  ",this.success);
+       if(this.fail == 6)
+       {
+           if(this.loginfo.stat == 1)
+           {
+               this.loginfo.total++;
+               postupdate()
+               .then(this.resultpop("Sorry you are hanged" , this.word));
+           }
+           else
+               this.resultpop("Sorry you are hanged", this.word);
+
+           this.reset();
+
+       }
+       else if(this.success == 0)
+       {
+           console.log(this.loginfo);
+           if(this.loginfo.stat == 1)
+           {
+               this.loginfo.total++;
+               this.loginfo.winCount++;
+               postupdate()
+               .then(this.resultpop("Yay you won !!!!!" , ""))
+           }
+           else
+               this.resultpop("Yay you won !!!!!" , "");
+           this.reset();
+           
+       }
+   }
+   
 }
 
-
-async function getleaderboard(){
-    const res = await fetch(baseurl + 'leaderboard', {
-        method : 'GET'
-    })
-    const data = await res.json();
-    console.log(data);
-    newvariable.leaderboardinp(data);
-}
-
-// async function sendstat(){
-//     const res = await fetch(baseurl +"stat" ,{
-//         method : "POST",
-//         headers :{
-//             "Content-Type" : "application/json"
-//         },
-//         body : JSON.stringify({stat : false})
-//     });
-// }
-class PlayerVerification extends updatingReset {
-
-    // making all popup as well as buttons associated with it except submit button operational
-    init(){
-        this.loginfo;
-        this.fail = 0;
-        getstat();
-        this.submitmultipop();
-        this.closebutton();
-        return this;
-    }
-
-
-
+class Resultpopup extends Results{
     leaderboardinp(data){
         leaderboardpar[0].innerHTML = `<tr class = "odd"><th>Rank</th><th>User Name</th><th>Total</th><th>Win Count</th>`;
         let outp;
@@ -458,8 +459,6 @@ class PlayerVerification extends updatingReset {
             leaderboardpar[0].innerHTML+=outp;
         }
     }
-
-
     closebutton(){
         closebutton.addEventListener('click' , (e)=>{
                 document.addEventListener('keypress' , updateAnalogKeyboard);
@@ -482,14 +481,18 @@ class PlayerVerification extends updatingReset {
             wordmes.textContent = `The word is ${this.word}`;
 
     }
+}
+
+class multiplayer extends Resultpopup{
     multiplayer(){
         multibutton.addEventListener('click', (e)=>{
             this.win1 = 0 ;
             this.win2 = 0;
             this.player = 1;
+            this.turns = 0;
+            this.turns1 = 0;
             this.loginfo.stat = 2;
             this.displaymultipop();
-
             this.player1 = "Player1";
             this.player2 = "Player2";
             par.innerHTML = "";
@@ -499,16 +502,69 @@ class PlayerVerification extends updatingReset {
             this.reset();
         })
     }
-
-    displaymultipop(){
-        console.log(bgmodel);
+    displaywordpop(){
         bgmodel.style.display = "flex";
-        multiplayPop.style.display = "block";
-        console.log(body);
+        wordpop.style.display = "block";
+        if(this.player == 1)
+            addname.textContent = `plz enter the word ${this.player1}`;
+        else
+            addname.textContent = `plz enter the word ${this.player2}`;
         body[0].style.overflow = "hidden";
         document.removeEventListener('keypress' , updateAnalogKeyboard); 
     }
+    closewordpop(){
+        bgmodel.style.display = "none";
+        wordpop.style.display = "none";
+        body[0].style.overflow = "scroll";
+        document.addEventListener('keypress' , updateAnalogKeyboard); 
+    }
+    submitwordpop(){
+        wordsub.addEventListener('click',(e)=>{
+            e.preventDefault();
+            this.multiplayerReset();
+            this.wordEvaluation();
+            // e.preventDefault();
+            
+        })
+        
+    }
+    
+    async wordEvaluation(){
+        let curword = wordinp.value.trim();
+        // try{
+            const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${curword}`);
+            // if (!response.ok) {
+            //     // throw new Error("Not 2xx response");
+            // } else {
+                const data = await res.json();
+                console.log(res);
+                if(data.title != "No Definitions Found")
+                {
+                    this.getWord(curword);
+                    this.closewordpop();
+                    wordwrongmess.textContent = "";
+                }
+                else
+                {
+                    wordwrongmess.textContent = "Invalid Word";
+                }
 
+            // }
+            
+        // }catch(err)
+        // {
+        //     wordpop.innerHTML += `<p>${err}</p>`;
+        // }
+        
+    }
+    displaymultipop(){
+        // console.log(bgmodel);
+        bgmodel.style.display = "flex";
+        multiplayPop.style.display = "block";
+        // console.log(body);
+        body[0].style.overflow = "hidden";
+        document.removeEventListener('keypress' , updateAnalogKeyboard); 
+    }
     closemultipop(){
         bgmodel.style.display = "none";
         multiplayPop.style.display = "none";
@@ -521,25 +577,27 @@ class PlayerVerification extends updatingReset {
             e.preventDefault();
             this.displayname();
             this.closemultipop();
-
+            this.displaywordpop();
         })
     }
 
     displayname(){
         let pos;
-        if(this.player == 1)
-        {
-            pos = document.querySelector('#player1name');
-            this.player1 = names.value;
+        pos = document.querySelector('#player1name');
+        if(player1name.value.trim() != ""){
+            pos.textContent = player1name.value;
+            this.player1 = player1name.value;
         }
-        else
-        {
-            pos = document.querySelector('#player2name');
-            this.player2 = names.value;
+        pos = document.querySelector('#player2name');
+        if(player2name.value.trim() != ""){
+            pos.textContent = player2name.value;
+            this.player2 = player2name.value;
         }
-        // console.log(pos);
-        if(names.value.trim() != "")
-            pos.textContent = names.value;
+        this.turns = Number(multiturns.value);
+        this.turns1 = this.turns;
+        this.updatewincount();
+    // console.log(pos);
+        
         
         
     }
@@ -560,106 +618,25 @@ class PlayerVerification extends updatingReset {
         
         
         this.normalreset();
+        this.reset();
+    }
+}
+
+class PlayerVerification extends multiplayer {
+
+    // making all popup as well as buttons associated with it except submit button operational
+    init(){
+        this.loginfo;
+        this.fail = 0;
+        getstat();
+        this.submitmultipop();
+        this.closebutton();
+        this.submitwordpop();
+        return this;
     }
 
 
-    // making the close button on the top right corner of every popup box operational
     
-    
-    
-    // // making the login/signup button(button) on top right corner of the screen operational ie toggle the respective form (box)
-    // buttonWork(button , box){
-    //         button.addEventListener('click' ,(e) =>{
-    //         document.removeEventListener('keypress' , updateAnalogKeyboard);
-    //         const par =   box.parentNode;
-    //         par.style.display = "flex";
-    //         box.style.display = "block";
-    //     })
-    // }
-
-
-    //   validating the values written in submit form are allowable
-    // signupValidation(data){
-    //     const password = document.querySelector("#passworddec");
-    //     const confpassword = document.querySelector("#confpassword");
-    //     let stat = true;
-    //     Array.from(signupInputslots).forEach(e => {
-    //         if(e.value.trim() == "")
-    //         {
-    //             signupwrongmessage.textContent = "one or more fields are empty";
-    //             stat = false;
-    //         }
-    //     });
-    //     if(stat && password.value != confpassword.value)
-    //     {
-    //         signupwrongmessage.textContent = "Password does not match";
-    //         return false;
-    //     }
-    //     if(stat)
-    //     {
-    //         data.forEach(e=>{
-    //             if(e.username == usernameInput.value)
-    //             {
-    //                 signupwrongmessage.textContent = 'username already exists';
-    //                 stat =  false;
-    //             }
-
-    //         })
-    //     }
-    //     return stat;
-    // }
-    // make signup possible
-
-    // signupBoxToJSON(){
-    //     let o = {};
-    //     Array.from(signupInputslots).forEach(e => {
-    //         o[e.getAttribute('name')] = e.value;
-    //     });
-    //     o.winCount = 0;
-    //     o.total = 0;
-    //     // console.log(o);
-    //     return o;
-    // }
-    // signup(){
-    //         signupsubmitbutton.addEventListener('click' ,(e)=>{
-    //             e.preventDefault();
-    //             signupwrongmessage.textContent = "";
-    //             const obj = getInfo3();
-    //             obj.then(data=>{
-    //                 console.log(data);
-    //                 if(this.signupValidation(data))
-    //                 {
-                        
-    //                     userName = usernameInput.value;
-    //                     console.log("y");
-    //                     postInfo()
-    //                     this.analogKeyboard();
-    //                     this.displayLogout();
-    //                     signupBox.style.display = "none";
-    //                     signupBox.parentElement.style.display = "none";
-    //                     this.logout();  
-    //                 }
-    //             })
-                
-    //         })
-        
-    //     return this;
-    // }
-
-// make login possible
-    // login(){
-    //     // loginSubmitButton.addEventListener('click', getInfo2);
-    //     // (e)=>{
-    //         // e.preventDefault();
-    //         // this.displayLogout();
-    //         // loginBox.parentElement.style.display = "none";
-    //         // loginBox.style.display = "none";
-    //         // this.logout();
-    //     // })
-        
-    //     // this.loginValidation();
-    //     return this;
-    // }
 
     // make logout possible
     logout(){
@@ -668,7 +645,7 @@ class PlayerVerification extends updatingReset {
         logoutTriggerButton.addEventListener('click', (e) =>{
             this.displaySignupLogin();
             this.loginfo.stat = false;
-            // sendstat();
+            poststat();
             this.reset();
         })
         
@@ -699,7 +676,8 @@ class PlayerVerification extends updatingReset {
     // display logout button
     displayLogout(){
         par.innerHTML = ""
-        let x = document.createElement('span');
+        let x = document.createElement('a');
+        x.getAttribute('href','#');
         x.className = "logout-button";
         x.textContent = "Logout"
         par.appendChild(x);

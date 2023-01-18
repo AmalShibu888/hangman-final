@@ -97,9 +97,26 @@
 
     <div class="bgModel">
         <form class="popup multipop">
-            <h4>Enter your Name</h4>
-            <input type="text" id="name">
+            <h5>Enter Name of first player</h5>
+            <input type="text" id="player1nameinp">
+            <h5>Enter Name of second player</h5>
+            <input type="text" id="player2nameinp">
+            <h5>Enter the Number of turns</h5>
+            <select name="turns" id="multiturns">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
             <button>Submit</button>
+        </form>
+
+        <form class="popup wordpop">
+            <h5 id="addname">plz enter the word</h5>
+            <input type="text" id="multiword">
+            <button id="wordsub">Submit</button>
+            <p id="wordwrongmess"></p>
         </form>
 
         <section class="popup outputpop" id="output">

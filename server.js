@@ -53,6 +53,8 @@ let user = {username : "",password : "",winCount : 0,total :0,stat :0};
 app.post('/form' ,(req,res)=>{
     user.username = req.body.username;
     user.password = req.body.password;
+    user.winCount = 0;
+    user.total = 0;
     res.status(200).send({status : 'recieved'})
     console.log(user);
 })
