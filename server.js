@@ -2,7 +2,7 @@
 
 const express = require('express')
 const app = express();
-const port = 8383;
+const port =  process.env.PORT || 8383;
 const Datastore = require('nedb');
 const path = require('path');
 
